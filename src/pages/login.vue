@@ -33,6 +33,7 @@ import axios from 'axios';
                 autofocus
                 placeholder="998941234567"
                 label="Phone number"
+                prepend-inner-icon="bx-mobile"
                 type="number"
               />
             </VCol>
