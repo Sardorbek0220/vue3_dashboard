@@ -1,6 +1,3 @@
-<script setup>
-</script>
-
 <template>
   <VBadge
     dot
@@ -54,7 +51,7 @@
               Manager
             </VListItemTitle>
           </VListItem>
-          <VDivider class="my-2" />
+          <!-- <VDivider class="my-2" />
 
           <VListItem link>
             <template #prepend>
@@ -102,7 +99,7 @@
             </template>
 
             <VListItemTitle>FAQ</VListItemTitle>
-          </VListItem>
+          </VListItem> -->
 
           <VDivider class="my-2" />
 
@@ -133,9 +130,7 @@ export default {
   methods: {
     logout(){
       localStorage.removeItem("manager_user");
-      if (!localStorage.removeItem("manager_user")) {
-        this.$router.push({ path: '/login' });
-      }
+      this.$router.push({ path: '/login' });
     }
   }
 }

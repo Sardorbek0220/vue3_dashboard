@@ -122,6 +122,12 @@ export default {
         }else{
           alert("Something went wrong !");
         }        
+      }).catch(function(error)
+      {
+        if (error.response.status == 401) {
+          localStorage.removeItem("manager_user");
+          location.reload();
+        }
       });
     },
     deleteDomain(domain){
@@ -135,6 +141,12 @@ export default {
           }else{
             alert("Something went wrong !");
           }        
+        }).catch(function(error)
+        {
+          if (error.response.status == 401) {
+            localStorage.removeItem("manager_user");
+            location.reload();
+          }
         });
       }
     },
@@ -146,6 +158,12 @@ export default {
           }else{
             alert("Something went wrong !");
           }        
+      }).catch(function(error)
+      {
+        if (error.response.status == 401) {
+          localStorage.removeItem("manager_user");
+          location.reload();
+        }
       });
     }
   }
