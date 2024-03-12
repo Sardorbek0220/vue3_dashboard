@@ -1,4 +1,5 @@
 <script setup>
+import axios from 'axios';
 import apexchart from 'vue3-apexcharts';
 // import AnalyticsTotalRevenue from '@/views/dashboard/AnalyticsTotalRevenue.vue'
 </script>
@@ -50,6 +51,7 @@ import apexchart from 'vue3-apexcharts';
 export default {
   data() {
     return {
+      user: {},
       bar: {
         series: [{
           name: "sales",
@@ -161,16 +163,46 @@ export default {
             }
           }]
         },
-      }
+      },
+      info: [],
     }
   },
 
   created(){
+    if (localStorage.getItem("manager_user")) {
+      this.user = JSON.parse(localStorage.getItem("manager_user"));
+      this.get();
+    }else{
+      this.$router.push({ name: 'Login' });
+    }
     
   },
 
   methods: {
+    async get(){
+      var token = "";
 
+      await axios.post("https://sdmanager.salesdoc.uz/api/v2/domain/jwt/token", 
+        { user_id: this.user.user_id },
+        { headers: { Authorization: 'Bearer ' + this.user.token } }
+      ).then(response => {
+        token = response.data.success.token
+      }).catch(function(error){
+        console.log(error);
+      });
+
+      if (token != "") {
+        await axios.get('https://demosd.salesdoc.io/api3/manager/index?id=1&jsonrpc=2.0&method=sales&params[datestart]=2024-03-01&params[endstart]=2024-03-31',
+          { headers: { Authorization: 'Bearer ' + token }}
+        ).then(response => (
+          this.info = response
+        )).catch(function(error){
+          console.log(error);
+        });
+        console.log(this.info);
+      }
+
+    }
   }
 }
 
