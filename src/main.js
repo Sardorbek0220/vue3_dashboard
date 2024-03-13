@@ -13,12 +13,16 @@ import { createApp } from 'vue'
 import Vue3EasyDataTable from 'vue3-easy-data-table'
 import 'vue3-easy-data-table/dist/style.css'
 
+import VueDatePicker from '@vuepic/vue-datepicker'
+import '@vuepic/vue-datepicker/dist/main.css'
+
 loadFonts()
 
 
 // Create vue app
 const app = createApp(App)
 app.component('EasyDataTable', Vue3EasyDataTable);
+app.component('VueDatePicker', VueDatePicker);
 
 // Use plugins
 app.use(vuetify)

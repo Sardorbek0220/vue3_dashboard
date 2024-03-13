@@ -1,36 +1,32 @@
 <script setup>
 import axios from 'axios';
+import { ref } from 'vue';
 import apexchart from 'vue3-apexcharts';
 // import AnalyticsTotalRevenue from '@/views/dashboard/AnalyticsTotalRevenue.vue'
 </script>
 
 <template>
   <VCard>
+    <VRow class="mt-6">
+      <VCol cols="9"></VCol>
+      <VCol cols="2">
+        <VueDatePicker v-model="date" :enable-time-picker="false" />
+      </VCol>
+      <VCol cols="1">
+        <VBtn color="secondary" @click="get">
+          Filter
+        </VBtn>
+      </VCol>
+    </VRow>
+    
     <VRow>
       <VCol
-        cols="12"
-        md="12"
-      >
-        <VCardItem class="pb-0">
-          <VCardTitle>Categories bars</VCardTitle>
-        </VCardItem>
-        <apexchart type="bar" height="380" :options="bar.chartOptions" :series="bar.series"></apexchart>
-      </VCol>
-      <VCol
         cols="6"
       >
-        <VCardItem class="pb-2 ml-6">
+        <VCardItem class="pb-2 ml-6 mb-6">
           <VCardTitle>Categories pie</VCardTitle>
         </VCardItem>
-        <apexchart class="ml-6" type="pie" width="380" :options="pie.chartOptions" :series="pie.series"></apexchart>
-      </VCol>
-      <VCol
-        cols="6"
-      >
-        <VCardItem class="pb-2 ml-6">
-          <VCardTitle>Categories pie</VCardTitle>
-        </VCardItem>
-        <apexchart class="ml-6" type="pie" width="380" :options="pie.chartOptions" :series="pie.series"></apexchart>
+        <apexchart class="ml-6" type="pie" width="100%" :options="pie.chartOptions" :series="pie.series"></apexchart>
       </VCol>
     </VRow>
   </VCard>
@@ -51,6 +47,7 @@ import apexchart from 'vue3-apexcharts';
 export default {
   data() {
     return {
+      date: ref(new Date()),
       user: {},
       bar: {
         series: [{
@@ -144,13 +141,13 @@ export default {
         },
       },
       pie: {
-        series: [44, 55, 13, 43, 22],
+        series: [],
         chartOptions: {
           chart: {
             width: 380,
             type: 'pie',
           },
-          labels: ['Team A', 'Team B', 'Team C', 'Team D', 'Team E'],
+          labels: [],
           responsive: [{
             breakpoint: 480,
             options: {
@@ -180,8 +177,14 @@ export default {
 
   methods: {
     async get(){
-      var token = "";
+      if (!this.date) {
+        alert("Date can't be blank !")
+        return false;
+      }
+      this.info = [];
+      const date = this.date.toISOString().slice(0, 10);
 
+      var token = "";
       await axios.post("https://sdmanager.salesdoc.uz/api/v2/domain/jwt/token", 
         { user_id: this.user.user_id },
         { headers: { Authorization: 'Bearer ' + this.user.token } }
@@ -192,16 +195,36 @@ export default {
       });
 
       if (token != "") {
-        await axios.get('https://demosd.salesdoc.io/api3/manager/index?id=1&jsonrpc=2.0&method=sales&params[datestart]=2024-03-01&params[endstart]=2024-03-31',
+        let domains = JSON.parse(localStorage.getItem("manager_domains"));
+
+        const promises = domains.map(domain => axios.get(
+          'https://'+domain.domain+'.salesdoc.io/api3/manager/index?id=1&jsonrpc=2.0&method=dataCS&params[date]='+date,
           { headers: { Authorization: 'Bearer ' + token }}
-        ).then(response => (
-          this.info = response
-        )).catch(function(error){
-          console.log(error);
-        });
-        console.log(this.info);
+        ));
+        const responses = await Promise.all(promises);
+
+        for (const res of responses) {
+          this.info.push(res.data.result)
+          this.setPie(res.data.result.sale, res.data.result.host)
+        }
       }
 
+    },
+    setPie(data, domain){
+      var domain = domain
+      for (const id in data) {
+        var cat_sum = 0;
+        var cat_name = "";
+        for (const currency_id in data[id]) {
+          cat_name = data[id][currency_id].name
+          cat_sum += data[id][currency_id].sum
+        }
+        if (cat_sum == 0) {
+          continue;
+        }
+        this.pie.series.push(cat_sum)
+        this.pie.chartOptions.labels.push(cat_name+" ("+domain+")")
+      }
     }
   }
 }

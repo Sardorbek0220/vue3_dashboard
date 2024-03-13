@@ -119,6 +119,8 @@ export default {
         if (response.data.success === true) {
           this.dialog = false;
           this.data.push({domain: this.domain, url: "https://"+this.domain+".salesdoc.io"})
+          localStorage.removeItem("manager_domains");
+          localStorage.setItem("manager_domains", JSON.stringify(this.data));
         }else{
           alert("Something went wrong !");
         }        
@@ -138,6 +140,8 @@ export default {
           if (response.data.success === true) {
             this.dialog = false;
             this.data = this.data.filter( d => d.domain !== domain ); 
+            localStorage.removeItem("manager_domains");
+            localStorage.setItem("manager_domains", JSON.stringify(this.data));
           }else{
             alert("Something went wrong !");
           }        
@@ -155,6 +159,7 @@ export default {
         { headers: { Authorization: `Bearer ${user.token}` } }).then(response => {
           if (response.data.success === true) {
             this.data = response.data.result;
+            localStorage.setItem("manager_domains", JSON.stringify(this.data));
           }else{
             alert("Something went wrong !");
           }        
