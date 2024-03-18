@@ -43,6 +43,47 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
           to: '/domains',
         }"
       />
+
+      <li class="nav-link">
+        <VMenu>
+          <template v-slot:activator="{ props }">
+            <a color="primary" v-bind="props">
+              <VIcon
+                icon="bx-bar-chart"
+                class="nav-item-icon"
+              />
+              Reports 
+              <VIcon
+                v-if="props['aria-expanded'] == 'false'"
+                icon="bx-chevron-left"
+                style="margin-left: 40%;"
+              />
+              <VIcon
+                v-else
+                icon="bx-chevron-down"
+                style="margin-left: 40%;"
+              />
+            </a>
+          </template>
+          <VList>
+            <VListItem>
+              <VListItemTitle>
+                <a href="/domains">Domains</a>
+              </VListItemTitle>
+            </VListItem>
+            <VListItem>
+              <VListItemTitle>
+                <a href="/domains">Domains</a>
+              </VListItemTitle>
+            </VListItem>
+            <VListItem>
+              <VListItemTitle>
+                <a href="/domains">Domains</a>
+              </VListItemTitle>
+            </VListItem>
+          </VList>
+        </VMenu>
+      </li>
       <!-- <VerticalNavLink
         :item="{
           title: 'Form Layouts',

@@ -238,17 +238,25 @@ import apexchart from 'vue3-apexcharts';
         :headers="categoryHeader"
         :items="categoryData"
         table-class-name="customize-table"
-      /> 
+      >
+        <template #item-sum="{ sum }">
+          {{ sum.toLocaleString() }}
+        </template>
+      </EasyDataTable>  
     </VCol>
     <VCol
       cols="12"
       class="pb-2 mb-4"
     >
       <EasyDataTable
-        :headers="dealerHeader"
-        :items="dealerData"
+        :headers="csHeader"
+        :items="csData"
         table-class-name="customize-table"
-      /> 
+      >
+        <template #item-sum="{ sum }">
+          {{ sum.toLocaleString() }}
+        </template>
+      </EasyDataTable> 
     </VCol>
   </VRow>
 </template>
@@ -257,10 +265,10 @@ import apexchart from 'vue3-apexcharts';
 export default {
   data() {
     return {
-      dealerData: [],
-      dealerHeader: [
+      csData: [],
+      csHeader: [
         {
-          text: 'Дилер',
+          text: 'CS',
           value: 'name'
         },
         {
@@ -308,26 +316,26 @@ export default {
           value: 'photo',
           align: 'end'
         },
-        {
-          text: 'Успешный посещения',
-          value: 'plan',
-          align: 'end'
-        },
-        {
-          text: 'План',
-          value: 'moPlan',
-          align: 'end'
-        },
-        {
-          text: 'Факт',
-          value: 'fact',
-          align: 'end'
-        },
-        {
-          text: 'Индекс',
-          value: 'index',
-          align: 'end'
-        }
+        // {
+        //   text: 'Успешный посещения',
+        //   value: 'plan',
+        //   align: 'end'
+        // },
+        // {
+        //   text: 'План',
+        //   value: 'moPlan',
+        //   align: 'end'
+        // },
+        // {
+        //   text: 'Факт',
+        //   value: 'fact',
+        //   align: 'end'
+        // },
+        // {
+        //   text: 'Индекс',
+        //   value: 'index',
+        //   align: 'end'
+        // }
       ],
       categoryData: [],
       categoryHeader: [
@@ -543,6 +551,8 @@ export default {
         this.summary.all = 0
         this.summary.data = {}
 
+        this.csData.splice(0)
+
         this.visit.planned = 0
         this.visit.akb = 0
         this.visit.reject = 0
@@ -561,6 +571,19 @@ export default {
         for (const res of responses) {
           var data = res.data.result
 
+          this.csData[data.host] = {
+            name: data.host,
+            sum: 0,
+            volume: 0,
+            count: 0,
+            planned: 0,
+            visited: 0,
+            akb: 0,
+            reject: 0,
+            not_visited: 0,
+            photo: 0
+          }
+
           this.setData(data.sale, data.host)
           if (data.visit) {
             for (const id in data.visit) {
@@ -578,15 +601,27 @@ export default {
               this.mainVisitData.no_plan_photo += data.visit[id].no_plan_photo
               this.mainVisitData.plan_gps += data.visit[id].plan_gps
               this.mainVisitData.no_plan_gps += data.visit[id].no_plan_gps
+
+              this.csData[data.host].planned += data.visit[id].planned
+              this.csData[data.host].akb += data.visit[id].akb
+              this.csData[data.host].reject += data.visit[id].reject
+              this.csData[data.host].not_visited += data.visit[id].not_visited
+              this.csData[data.host].visited += data.visit[id].visited
+              this.csData[data.host].photo += data.visit[id].photo
             }
           }
 
         }
         let summary = this.summary;
         let categoryData = this.categoryData;
+        let csData = this.csData;
 
         this.categoryData = Object.values(categoryData).map(item => {
           item.part = this.getPercent(item.sum && (item.sum / summary.all))
+          return item
+        })
+
+        this.csData = Object.values(csData).map(item => {
           return item
         })
       }
@@ -622,6 +657,10 @@ export default {
           this.categoryData[domain+"-"+id].volume += data[id][currency_id].volume
           this.categoryData[domain+"-"+id].count += data[id][currency_id].count
           this.categoryData[domain+"-"+id].akb += data[id][currency_id].akb
+
+          this.csData[domain].sum += data[id][currency_id].sum
+          this.csData[domain].volume += data[id][currency_id].volume
+          this.csData[domain].count += data[id][currency_id].count
         }
         if (cat_sum == 0) {
           continue;
