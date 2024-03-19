@@ -52,7 +52,7 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
                 icon="bx-bar-chart"
                 class="nav-item-icon"
               />
-              Reports 
+              Отчеты 
               <VIcon
                 v-if="props['aria-expanded'] == 'false'"
                 icon="bx-chevron-left"
@@ -68,17 +68,7 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
           <VList>
             <VListItem>
               <VListItemTitle>
-                <a href="/domains">Domains</a>
-              </VListItemTitle>
-            </VListItem>
-            <VListItem>
-              <VListItemTitle>
-                <a href="/domains">Domains</a>
-              </VListItemTitle>
-            </VListItem>
-            <VListItem>
-              <VListItemTitle>
-                <a href="/domains">Domains</a>
+                <RouterLink to="/report/sale">Отчет по продажам</RouterLink>
               </VListItemTitle>
             </VListItem>
           </VList>

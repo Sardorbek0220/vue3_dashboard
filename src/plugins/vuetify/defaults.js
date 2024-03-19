@@ -68,7 +68,7 @@ export default {
     hideDetails: 'auto',
   },
   VSelect: {
-    variant: 'outlined',
+    variant: 'underlined',
     color: 'primary',
     hideDetails: 'auto',
   },

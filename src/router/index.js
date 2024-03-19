@@ -22,9 +22,9 @@ const router = createRouter({
           component: () => import('../pages/tables.vue'),
         },
         {
-          path: 'form-layouts',
-          component: () => import('../pages/form-layouts.vue'),
-        },
+          path: 'report/sale',
+          component: () => import('../pages/reports/sale.vue'),
+        }
       ],
     },
     {
