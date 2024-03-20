@@ -6,7 +6,7 @@ import apexchart from 'vue3-apexcharts';
 <template>
     <VRow>
         <VCol cols="3">
-            <VueDatePicker class="mt-4" v-model="date" range :partial-range="false" cancelText="cancel" selectText="ok" />
+            <VueDatePicker class="mt-4" v-model="fields.date" range :partial-range="false" cancelText="cancel" selectText="ok" />
         </VCol>
         <VCol cols="2">
             <VSelect 
@@ -62,6 +62,14 @@ import apexchart from 'vue3-apexcharts';
                 </template>
             </EasyDataTable>  
         </VCol>
+        <VCol
+            cols="12"
+            v-if="fields.type != 3"
+        >
+            <VCard height="500px">
+                <apexchart type="line" width="100%" height="100%" :options="line.chartOptions" :series="line.series"></apexchart>
+            </VCard>
+        </VCol>
     </VRow>
 </template>
 
@@ -69,7 +77,6 @@ import apexchart from 'vue3-apexcharts';
 export default {
     data() {
         return {
-            country: null,
             dateTypes: [
                 {title: 'Дата заявки', value:"order.DATE"},
                 {title: 'Дата отгрузки', value:"order.DATE_LOAD"},
@@ -127,6 +134,7 @@ export default {
                 dateType: "order.DATE_LOAD",
                 type: 2,
                 label: 0,
+                date: [(new Date()).toISOString().slice(0, 8) + '01' ,(new Date()).toISOString().slice(0, 10)],
             },
             categoryData: [],
             categoryHeader: [
@@ -160,98 +168,118 @@ export default {
                 value: 'akb',
                 sortable: true
                 }
-            ],
-            date: [(new Date()).toISOString().slice(0, 8) + '01' ,(new Date()).toISOString().slice(0, 10)],     
+            ],     
             user: {},
             bar: {
                 series: [{
-                name: "sales",
-                data: [
-                    {
-                    x: '2019/01/01',
-                    y: 400
-                    }, 
-                    {
-                    x: '2019/04/01',
-                    y: 430
-                    }, 
-                    {
-                    x: '2019/07/01',
-                    y: 448
-                    }, 
-                    {
-                    x: '2019/10/01',
-                    y: 470
-                    }, 
-                    {
-                    x: '2020/01/01',
-                    y: 540
-                    }, 
-                    {
-                    x: '2020/04/01',
-                    y: 580
-                    }, 
-                    {
-                    x: '2020/07/01',
-                    y: 690
-                    }, 
-                    {
-                    x: '2020/10/01',
-                    y: 690
-                    }
-                ]
+                    name: "Продажа",
+                    data: []
                 }],
                 chartOptions: {
-                plotOptions: {
-                    bar: {
-                    borderRadius: 10,
-                    columnWidth: '30%',
-                    endingShape: 'rounded',
-                    startingShape: 'rounded',
+                    plotOptions: {
+                        bar: {
+                        borderRadius: 10,
+                        columnWidth: '30%',
+                        endingShape: 'rounded',
+                        startingShape: 'rounded',
+                        },
                     },
-                },
-                stroke: {
-                    width: 1,
-                    lineCap: 'round',
+                    stroke: {
+                        width: 1,
+                        lineCap: 'round',
+                        colors: ['#00CCFF'],
+                    },
                     colors: ['#00CCFF'],
-                },
-                colors: ['#00CCFF'],
-                chart: {
-                    type: 'bar',
-                    height: 180,
-                },
-                xaxis: {
-                    type: 'category',
-                    labels: {
-                    style: {
-                        fontSize: '14px',
-                        fontFamily: 'Public Sans',
-                        colors: '#8592A3'
+                    chart: {
+                        type: 'bar',
+                        height: 180,
                     },
-                    formatter: function(val) {
-                        return val
+                    xaxis: {
+                        type: 'category',
+                        labels: {
+                            style: {
+                                fontSize: '14px',
+                                fontFamily: 'Public Sans',
+                                colors: '#8592A3'
+                            },
+                            formatter: function(val) {
+                                return val
+                            }
+                        },
+                    },
+                    yaxis: {
+                        labels: {
+                            style: {
+                                fontSize: '14px',
+                                fontFamily: 'Public Sans',
+                                colors: '#8592A3'
+                            },
+                        },
+                    },
+                    title: {
+                        text: '',
+                    },
+                    tooltip: {
+                        x: {
+                            formatter: function(val) {
+                                return val;
+                            }  
+                        }
+                    },
+                },
+            },
+            line: {
+                series: [{
+                    name: "Продажа",
+                    data: []
+                }],
+                chartOptions: {
+                    chart: {
+                        height: 350,
+                        type: 'line',
+                        zoom: {
+                            enabled: false
+                        }
+                    },
+                    dataLabels: {
+                        enabled: true
+                    },
+                    stroke: {
+                        curve: 'smooth'
+                    },
+                    colors: ['#00CCFF'],
+                    title: {
+                        text: '',
+                        align: 'left'
+                    },
+                    grid: {
+                        row: {
+                            colors: ['white', 'transparent'],
+                            opacity: 0.5
+                        },
+                    },
+                    xaxis: {
+                        categories: [],
+                        labels: {
+                            style: {
+                                fontSize: '14px',
+                                fontFamily: 'Public Sans',
+                                colors: '#8592A3'
+                            },
+                            formatter: function(val) {
+                                return val;
+                            }
+                        },
+                    },
+                    yaxis: {
+                        labels: {
+                            style: {
+                                fontSize: '14px',
+                                fontFamily: 'Public Sans',
+                                colors: '#8592A3'
+                            },
+                        },
                     }
-                    },
-                },
-                yaxis: {
-                    labels: {
-                    style: {
-                        fontSize: '14px',
-                        fontFamily: 'Public Sans',
-                        colors: '#8592A3'
-                    },
-                    },
-                },
-                title: {
-                    text: '',
-                },
-                tooltip: {
-                    x: {
-                    formatter: function(val) {
-                        return val
-                    }  
-                    }
-                },
                 },
             },
         }
@@ -268,12 +296,11 @@ export default {
 
     methods: {
         async get(){
-            console.log(this.date);
-            if (!this.date) {
+            if (!this.fields.date) {
                 alert("Date can't be blank !")
                 return false;
             }
-            const date = this.date;
+            this.setDays(this.fields.date[0], this.fields.date[1]);
 
             var token = "";
             await axios.post("https://sdmanager.salesdoc.uz/api/v2/domain/jwt/token", 
@@ -288,37 +315,92 @@ export default {
             if (token != "") {
                 let domains = JSON.parse(localStorage.getItem("manager_domains"));
 
-                const promises = domains.map(domain => axios.get(
-                'https://'+domain.domain+'.salesdoc.io/api3/manager/index?id=1&jsonrpc=2.0&method=dataCS&params[date]='+date,
-                { headers: { Authorization: 'Bearer ' + token }}
+                const promises = domains.map(domain => axios.post(
+                'https://'+domain.domain+'.salesdoc.io/api3/manager/index',
+                    { id: "1", jsonrpc: "2.0", method: "saleReportCS", params: this.fields },
+                    { headers: { Authorization: 'Bearer ' + token }}
                 ));
                 const responses = await Promise.all(promises);
 
+                this.bar.series[0].data.splice(0)
+                this.line.series[0].data.splice(0)
+
+                var lineData = {}
+                for (const res of responses) {
+                    var chartData = {
+                        host: res.data.host,
+                        data: {}
+                    }
+                    
+                    for (const data of res.data.data) {
+                        
+                        for (const dealer in data) {
+                            
+                            if (dealer == 'category_id') {
+                                continue;
+                            }
+                            if (!chartData.data[dealer]) {
+                                chartData.data[dealer] = 0;
+                            }
+                            
+                            if (data[dealer] != []) {
+                                for (const day in data[dealer]) {
+                                    chartData.data[dealer] += data[dealer][day];
+                                    if (!lineData[day]) {
+                                        lineData[day] = 0;
+                                    }
+                                    lineData[day] += data[dealer][day];
+                                }
+                            }                            
+                        }
+                    }
+
+                    this.setData(chartData)
+                }
+
+                this.line.chartOptions.xaxis.categories.forEach(day => {
+                    if (lineData[day]) {
+                        this.line.series[0].data.push(lineData[day])
+                    }else{
+                        this.line.series[0].data.push(0)
+                    }
+                });
             }
 
         },
 
-        setData(data, domain){
-        var domain = domain
-        
-        }
+        setData(data){
+            for (const dealer in data.data) {
+                if (data.data[dealer] == 0) {
+                    continue;
+                }
+                this.bar.series[0].data.push({x: dealer+' ('+data.host+')', y: data.data[dealer]})
+            }
+        },
+
+        setDays(start, end) {
+            this.line.chartOptions.xaxis.categories.splice(0)
+            for(var dt=new Date(start); dt<=new Date(end); dt.setDate(dt.getDate()+1)){
+                this.line.chartOptions.xaxis.categories.push(new Date(dt).toISOString().slice(5, 10))
+            }
+        },
     }
 }
 
 </script>
 <style>
-.apexcharts-legend-text {
-  color: rgb(133, 146, 163) !important;
-}
+  .apexcharts-legend-text {
+    color: rgb(133, 146, 163) !important;
+  }
 
-.v-card-text {
-  font-size: 12px !important;
-}
+  .v-card-text {
+    font-size: 12px !important;
+  }
 
-.customize-table {
-  --easy-table-header-font-color: #fff;
-  --easy-table-header-background-color: #8592a3;
-}
+  .customize-table {
+    --easy-table-header-font-color: #fff;
+    --easy-table-header-background-color: #8592a3;
+  }
 </style>
 
 <style lang="scss" scoped>
