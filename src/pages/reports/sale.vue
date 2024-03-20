@@ -178,10 +178,10 @@ export default {
                 chartOptions: {
                     plotOptions: {
                         bar: {
-                        borderRadius: 10,
-                        columnWidth: '30%',
-                        endingShape: 'rounded',
-                        startingShape: 'rounded',
+                            borderRadius: 10,
+                            columnWidth: '30%',
+                            endingShape: 'rounded',
+                            startingShape: 'rounded',
                         },
                     },
                     stroke: {
@@ -220,11 +220,17 @@ export default {
                         text: '',
                     },
                     tooltip: {
-                        x: {
+                        theme: "dark",
+                        y: {
                             formatter: function(val) {
-                                return val;
+                                return val.toLocaleString();
                             }  
                         }
+                    },
+                    dataLabels: {
+                        formatter: function(val) {
+                            return val.toLocaleString();
+                        },
                     },
                 },
             },
@@ -242,7 +248,10 @@ export default {
                         }
                     },
                     dataLabels: {
-                        enabled: true
+                        enabled: true,
+                        formatter: function(val) {
+                            return val.toLocaleString();
+                        },
                     },
                     stroke: {
                         curve: 'smooth'
@@ -279,7 +288,15 @@ export default {
                                 colors: '#8592A3'
                             },
                         },
-                    }
+                    },
+                    tooltip: {
+                        theme: "dark",
+                        y: {
+                            formatter: function(val) {
+                                return val.toLocaleString();
+                            }  
+                        }
+                    },
                 },
             },
             areas: {}
