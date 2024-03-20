@@ -282,6 +282,7 @@ export default {
                     }
                 },
             },
+            areas: {}
         }
     },
 
@@ -331,6 +332,13 @@ export default {
                         host: res.data.host,
                         data: {}
                     }
+
+                    res.data.areas.forEach(area => {
+                        if (!this.areas[res.data.host]) {
+                        this.areas[res.data.host] = {}
+                        }
+                        this.areas[res.data.host][area.value] = area.text
+                    });
                     
                     for (const data of res.data.data) {
                         
@@ -370,11 +378,11 @@ export default {
         },
 
         setData(data){
-            for (const dealer in data.data) {
-                if (data.data[dealer] == 0) {
+            for (const area_id in data.data) {
+                if (data.data[area_id] == 0) {
                     continue;
                 }
-                this.bar.series[0].data.push({x: dealer+' ('+data.host+')', y: data.data[dealer]})
+                this.bar.series[0].data.push({x: this.areas[data.host][area_id]+" ("+data.host+")", y: data.data[area_id]})
             }
         },
 
