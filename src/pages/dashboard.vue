@@ -66,7 +66,7 @@ import apexchart from 'vue3-apexcharts';
               </template>
 
               <VListItemTitle>
-                {{ key }}
+                {{ getCurrencyName(key) }}
               </VListItemTitle>
 
               <template #append>
@@ -265,6 +265,7 @@ import apexchart from 'vue3-apexcharts';
 export default {
   data() {
     return {
+      currencies: {},
       csData: [],
       csHeader: [
         {
@@ -494,6 +495,13 @@ export default {
             photo: 0
           }
 
+          data.currencies.forEach(cur => {
+            if (!this.currencies[data.host]) {
+              this.currencies[data.host] = {}
+            }
+            this.currencies[data.host][cur.value] = cur.text
+          });
+
           this.setData(data.sale, data.host)
           if (data.visit) {
             for (const id in data.visit) {
@@ -585,23 +593,27 @@ export default {
         minimumFractionDigits: 2
       })) || 0
     },
+    getCurrencyName(domain){
+      let info = domain.split('-');
+      return this.currencies[info[0]][info[1]]+" ("+info[0]+")";
+    }
   }
 }
 
 </script>
 <style>
-.apexcharts-legend-text {
-  color: rgb(133, 146, 163) !important;
-}
+  .apexcharts-legend-text {
+    color: rgb(133, 146, 163) !important;
+  }
 
-.v-card-text {
-  font-size: 12px !important;
-}
+  .v-card-text {
+    font-size: 12px !important;
+  }
 
-.customize-table {
-  --easy-table-header-font-color: #fff;
-  --easy-table-header-background-color: #8592a3;
-}
+  .customize-table {
+    --easy-table-header-font-color: #fff;
+    --easy-table-header-background-color: #8592a3;
+  }
 </style>
 
 <style lang="scss" scoped>
