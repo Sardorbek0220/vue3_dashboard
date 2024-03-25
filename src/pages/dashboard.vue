@@ -244,6 +244,7 @@ import apexchart from 'vue3-apexcharts';
           {{ sum.toLocaleString() }}
         </template>
       </EasyDataTable>  
+      <VBtn @click="exportData(categoryData, categoryHeader, 'Category')" class="mt-2" style="float: inline-end;">export</VBtn>
     </VCol>
     <VCol
       cols="12"
@@ -259,11 +260,73 @@ import apexchart from 'vue3-apexcharts';
           {{ sum.toLocaleString() }}
         </template>
       </EasyDataTable> 
+      <VBtn @click="exportData(csData, csHeader, 'dealer')" class="mt-2" style="float: inline-end;">export</VBtn>
     </VCol>
+    
   </VRow>
 </template>
 
 <script>
+
+var dataToExcel = (function() {
+  var uri = 'data:application/vnd.ms-excel;base64,',
+    template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta http-equiv="content-type" content="text/plain; charset=UTF-8"/></head><body><table>{table}</table></body></html>',
+    base64 = function(s) {
+        return window.btoa(unescape(encodeURIComponent(s)))
+    },
+    format = function(s, c) {
+        return s.replace(/{(\w+)}/g, function(m, p) {
+            return c[p];
+        })
+    },
+    create = e => document.createElement(e)
+  return function(data, headers, name) {
+    let table;
+    if (Array.isArray(data)) {
+        table = create('table')
+        let thead
+        if (!Array.isArray(headers)) {
+            thead = headers.head
+            headers = headers.headers
+        } else {
+            thead = create('thead')
+            let row = create('tr')
+            headers.forEach(item => {
+                let th = create('th')
+                th.innerText = item.text
+                row.append(th)
+            })
+            thead.append(row)
+        }
+        table.append(thead)
+        let tbody = create('tbody')
+        data.forEach(item => {
+            let row = create('tr')
+            headers.forEach(header => {
+                let td = create('td')
+                td.innerHTML = item[header.value] === undefined ? '' : item[header.value]
+                row.append(td)
+            })
+            tbody.append(row)
+        })
+        table.append(tbody)
+    } else if (!data.nodeType) {
+        table = document.querySelector(table)
+    } else {
+        table = data
+    }
+    var ctx = {
+        worksheet: name || 'Worksheet',
+        table: table.innerHTML
+    }
+    let downloadLink = document.createElement("a");
+    downloadLink.href = uri + base64(format(template, ctx));
+    var filename = new Date().toLocaleDateString("es-CL");
+    downloadLink.download = name + ' (' + filename + ')';
+    downloadLink.click();
+  }
+})();
+
 export default {
   data() {
     return {
@@ -601,7 +664,10 @@ export default {
     getCurrencyName(domain){
       let info = domain.split('-');
       return this.currencies[info[0]][info[1]]+" ("+info[0]+")";
-    }
+    },
+    exportData(data, header, title) {
+      dataToExcel(data, header, title)
+    },
   }
 }
 
