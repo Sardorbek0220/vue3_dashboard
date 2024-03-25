@@ -30,7 +30,7 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
     <template #vertical-nav-content>
       <VerticalNavLink
         :item="{
-          title: 'Dashboard',
+          title: 'Дашборд',
           icon: 'bx-home',
           to: '/dashboard',
         }"

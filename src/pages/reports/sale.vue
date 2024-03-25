@@ -154,7 +154,7 @@ export default {
                 { text: "ИД", value: "category_id" },
                 { text: "Категории", value: "category" },
                 { text: "Domain", value: "domain"},
-                { text: "Сумма", value: "sum"}
+                { text: "Сумма", value: "sum", sortable: true}
             ],   
             productData: [],
             productHeader: [],       
