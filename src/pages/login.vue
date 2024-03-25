@@ -32,7 +32,7 @@ import axios from 'axios';
                 v-model="userPhone"
                 autofocus
                 placeholder="998941234567"
-                label="Phone number"
+                label="Номер телефона"
                 prepend-inner-icon="bx-mobile"
                 type="number"
               />
@@ -44,7 +44,7 @@ import axios from 'axios';
                 type="button"
                 @click="login" :loading="loading"
               >
-                Getting code
+              Получение кода
               </VBtn>
             </VCol>
           </VRow>
@@ -78,7 +78,7 @@ import axios from 'axios';
                 v-model="userCode"
                 autofocus
                 placeholder=""
-                label="Write 4 numbers"
+                label="Напишите 4 цифры"
                 type="number"
               />
             </VCol>
@@ -89,7 +89,7 @@ import axios from 'axios';
                 type="button"
                 @click="sendCode" :loading="loading"
               >
-                Sending code
+              Отправка кода
               </VBtn>
             </VCol>
           </VRow>
