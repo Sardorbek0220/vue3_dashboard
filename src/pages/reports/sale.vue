@@ -6,7 +6,7 @@ import apexchart from 'vue3-apexcharts';
 <template>
     <VRow>
         <VCol cols="3">
-            <VueDatePicker class="mt-4" v-model="fields.date" range :partial-range="false" cancelText="cancel" selectText="ok" />
+            <VueDatePicker class="mt-4" v-model="fields.date" range :partial-range="false" cancelText="Отмена" selectText="Сохранить" />
         </VCol>
         <VCol cols="2">
             <VSelect 
@@ -34,8 +34,8 @@ import apexchart from 'vue3-apexcharts';
             />
         </VCol>
         <VCol cols="1">
-            <VBtn class="mt-4" width="100%" color="secondary" @click="get">
-                Filter
+            <VBtn class="mt-4" width="100%" color="secondary" @click="get" :loading="loading">
+                Фильтр
             </VBtn>
         </VCol>
     </VRow>
@@ -89,6 +89,7 @@ import apexchart from 'vue3-apexcharts';
 export default {
     data() {
         return {
+            loading: false,
             dateTypes: [
                 {title: 'Дата заявки', value:"order.DATE"},
                 {title: 'Дата отгрузки', value:"order.DATE_LOAD"},
@@ -307,6 +308,7 @@ export default {
                 alert("Date can't be blank !")
                 return false;
             }
+            this.loading = true;
             this.setDays(this.fields.date[0], this.fields.date[1]);
 
             var token = "";
@@ -395,6 +397,7 @@ export default {
                         this.line.series[0].data.push(0)
                     }
                 });
+                this.loading = false;
             }
 
         },

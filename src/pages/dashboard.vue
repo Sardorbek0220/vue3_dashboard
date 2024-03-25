@@ -10,11 +10,11 @@ import apexchart from 'vue3-apexcharts';
   <VRow>
     <VCol cols="9"></VCol>
     <VCol cols="2">
-      <VueDatePicker v-model="date" :enable-time-picker="false" />
+      <VueDatePicker v-model="date" :enable-time-picker="false" cancelText="Отмена" selectText="Сохранить"/>
     </VCol>
     <VCol cols="1">
-      <VBtn width="100%" color="secondary" @click="get">
-        Filter
+      <VBtn width="100%" color="secondary" @click="get" :loading="loading">
+        Фильтр
       </VBtn>
     </VCol>
   </VRow>
@@ -238,6 +238,7 @@ import apexchart from 'vue3-apexcharts';
         :headers="categoryHeader"
         :items="categoryData"
         table-class-name="customize-table"
+        :rows-per-page="10"
       >
         <template #item-sum="{ sum }">
           {{ sum.toLocaleString() }}
@@ -252,6 +253,7 @@ import apexchart from 'vue3-apexcharts';
         :headers="csHeader"
         :items="csData"
         table-class-name="customize-table"
+        :rows-per-page="10"
       >
         <template #item-sum="{ sum }">
           {{ sum.toLocaleString() }}
@@ -265,11 +267,12 @@ import apexchart from 'vue3-apexcharts';
 export default {
   data() {
     return {
+      loading: false,
       currencies: {},
       csData: [],
       csHeader: [
         {
-          text: 'CS',
+          text: 'Домен',
           value: 'name'
         },
         {
@@ -433,6 +436,7 @@ export default {
         alert("Date can't be blank !")
         return false;
       }
+      this.loading = true;
       this.info = [];
       const date = this.date.toISOString().slice(0, 10);
 
@@ -543,6 +547,7 @@ export default {
           return item
         })
       }
+      this.loading = false;
 
     },
     setData(data, domain){

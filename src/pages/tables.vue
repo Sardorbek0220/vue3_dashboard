@@ -3,19 +3,19 @@ import axios from 'axios';
 </script>
 <template>
   <VBtn @click="openDialog" class="mb-6">
-    Add domain
+    Добавить домен
   </VBtn>
   <VTable>
     <thead>
       <tr>
         <th class="text-uppercase">
-          Domain name
+          Название
         </th>
         <th>
           Url
         </th>
         <th>
-          Delete
+          Удалить
         </th>
       </tr>
     </thead>
@@ -43,7 +43,7 @@ import axios from 'axios';
     <VCard>
       <VCardTitle class="headline"
         primary-title>
-        Add domain
+        Добавить домен
       </VCardTitle>
 
       <VCardText>
@@ -52,7 +52,7 @@ import axios from 'axios';
             <VLayout row wrap>
               <VTextField
                 v-model="domain"
-                label="Domain"/>
+                label="Домен"/>
             </VLayout>
           </VContainer>
         </VForm>
@@ -63,13 +63,13 @@ import axios from 'axios';
           flat
           color="secondary"
           @click="dialog = false">
-          Cancel
+          Отмена
         </VBtn>
         <VBtn
           color="success"
           :loading="loading"
           @click="addDomain">
-          Add
+          Добавить
         </VBtn>
       </VCardActions>
     </VCard>
@@ -133,7 +133,7 @@ export default {
       });
     },
     deleteDomain(domain){
-      if(confirm("Are you sure !")){
+      if(confirm("Вы уверены !")){
         axios.delete("https://sdmanager.salesdoc.uz/api/v2/domain/delete?user_id="+this.user.user_id+"&domain="+domain, 
           { headers: { Authorization: `Bearer ${this.user.token}` } }
         ).then(response => {

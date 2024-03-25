@@ -38,7 +38,7 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
 
       <VerticalNavLink
         :item="{
-          title: 'Domains',
+          title: 'Домены',
           icon: 'bx-server',
           to: '/domains',
         }"
