@@ -50,17 +50,29 @@ import apexchart from 'vue3-apexcharts';
         </VCol>
         <VCol
             cols="12"
-            class="pb-2 mb-4"
         >
+        <VCard>
             <EasyDataTable
                 :headers="categoryHeader"
                 :items="categoryData"
                 table-class-name="customize-table"
+                @expand-row="loadIntroduction"
+                :rows-per-page="10"
             >
                 <template #item-sum="{ sum }">
                     {{ sum.toLocaleString() }}
                 </template>
+                <template #expand="item">
+                    <EasyDataTable class="mt-2 mb-2"
+                        :headers="productHeader"
+                        :items="productData"
+                        table-class-name="customize-table-inside"
+                        :rows-per-page="10"
+                    >
+                    </EasyDataTable>
+                </template>
             </EasyDataTable>  
+        </VCard>
         </VCol>
         <VCol
             cols="12"
@@ -138,37 +150,13 @@ export default {
             },
             categoryData: [],
             categoryHeader: [
-                {
-                text: 'Категория',
-                value: 'category',
-                sortable: true
-                },
-                {
-                text: 'Доля',
-                value: 'part',
-                sortable: true
-                },
-                {
-                text: 'Сумма',
-                value: 'sum',
-                sortable: true
-                },
-                {
-                text: 'Объем',
-                value: 'volume',
-                sortable: true
-                },
-                {
-                text: 'Количество',
-                value: 'count',
-                sortable: true
-                },
-                {
-                text: 'АКБ',
-                value: 'akb',
-                sortable: true
-                }
-            ],     
+                { text: "ИД", value: "category_id" },
+                { text: "Категории", value: "category" },
+                { text: "Domain", value: "domain"},
+                { text: "Сумма", value: "sum"}
+            ],   
+            productData: [],
+            productHeader: [],       
             user: {},
             bar: {
                 series: [{
@@ -299,7 +287,8 @@ export default {
                     },
                 },
             },
-            areas: {}
+            areas: {},
+            categories: {}
         }
     },
 
@@ -344,24 +333,36 @@ export default {
                 this.line.series[0].data.splice(0)
 
                 var lineData = {}
+                var categoryData = [];
+
+                this.areas = {}
                 for (const res of responses) {
                     var chartData = {
                         host: res.data.host,
                         data: {}
                     }
 
+                    var categories = {}
+                    res.data.categories.forEach(cat => {
+                        categories[cat.value] = cat.text
+                    });
+
                     res.data.areas.forEach(area => {
                         if (!this.areas[res.data.host]) {
-                        this.areas[res.data.host] = {}
+                            this.areas[res.data.host] = {}
                         }
                         this.areas[res.data.host][area.value] = area.text
                     });
                     
                     for (const data of res.data.data) {
+
+                        var domainCat = { category_id: null, domain: res.data.host, sum: 0};
                         
                         for (const dealer in data) {
                             
                             if (dealer == 'category_id') {
+                                domainCat.category_id = data[dealer];
+                                domainCat.category = categories[data[dealer]];
                                 continue;
                             }
                             if (!chartData.data[dealer]) {
@@ -371,6 +372,7 @@ export default {
                             if (data[dealer] != []) {
                                 for (const day in data[dealer]) {
                                     chartData.data[dealer] += data[dealer][day];
+                                    domainCat.sum += data[dealer][day];
                                     if (!lineData[day]) {
                                         lineData[day] = 0;
                                     }
@@ -378,10 +380,13 @@ export default {
                                 }
                             }                            
                         }
+
+                        categoryData.push(domainCat);
                     }
 
                     this.setData(chartData)
                 }
+                this.categoryData = categoryData;
 
                 this.line.chartOptions.xaxis.categories.forEach(day => {
                     if (lineData[day]) {
@@ -392,6 +397,48 @@ export default {
                 });
             }
 
+        },
+
+        async loadIntroduction(index){
+            const item = this.categoryData[index]
+            
+            this.productHeader.splice(0)
+            this.productHeader.push({ text: "Продукты", value: "name" });
+
+            for (const area in this.areas[item.domain]) {
+                this.productHeader.push({ text: this.areas[item.domain][area], value: area})
+            }
+
+            this.productHeader.push({ text: "Всего", value: "total" });
+
+            var token = "";
+            await axios.post("https://sdmanager.salesdoc.uz/api/v2/domain/jwt/token", 
+                { user_id: this.user.user_id },
+                { headers: { Authorization: 'Bearer ' + this.user.token } }
+            ).then(response => {
+                token = response.data.success.token
+            }).catch(function(error){
+                console.log(error);
+            });
+
+            await axios.post("https://"+item.domain+".salesdoc.io/api3/manager/index", 
+                { id: "1", jsonrpc: "2.0", method: "getProductsCS", params: { ...this.fields, category_id: item.category_id} },
+                { headers: { Authorization: 'Bearer ' + token } }
+            ).then(response => {
+                this.productData = response.data.data
+            }).catch(function(error){
+                console.log(error);
+            });
+
+            for (const header of this.productHeader) {
+                for (const data of this.productData) {
+                    if (!data[header.value]) {
+                        data[header.value] = 0;
+                    }else{
+                        data[header.value] = data[header.value].toLocaleString()
+                    }
+                }
+            }
         },
 
         setData(data){
@@ -425,6 +472,11 @@ export default {
   .customize-table {
     --easy-table-header-font-color: #fff;
     --easy-table-header-background-color: #8592a3;
+  }
+
+  .customize-table-inside {
+    --easy-table-header-font-color: #fff;
+    --easy-table-header-background-color: #c2c7d0;
   }
 </style>
 
