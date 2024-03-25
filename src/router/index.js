@@ -19,7 +19,7 @@ const router = createRouter({
         },
         {
           path: 'domains',
-          component: () => import('../pages/tables.vue'),
+          component: () => import('../pages/domains.vue'),
         },
         {
           path: 'report/sale',
