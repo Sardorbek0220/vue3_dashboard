@@ -72,7 +72,7 @@ import apexchart from 'vue3-apexcharts';
                     </EasyDataTable>
                 </template>
             </EasyDataTable>  
-            <VBtn @click="exportData(categoryData, categoryHeader, 'category')" class="mt-2" style="float: inline-end;">export</VBtn>
+            <VBtn @click="exportData(categoryData, categoryHeader, 'category')" class="mt-2 mb-2 mr-2" style="float: inline-end;">export</VBtn>
         </VCard>
         </VCol>
         <VCol
