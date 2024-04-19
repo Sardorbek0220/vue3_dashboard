@@ -25,7 +25,6 @@ import axios from 'axios';
       <VCardText />
 
       <VCardText>
-        <VForm>
           <VRow>
             <VCol cols="12">
               <VTextField
@@ -48,7 +47,6 @@ import axios from 'axios';
               </VBtn>
             </VCol>
           </VRow>
-        </VForm>
       </VCardText>
     </VCard>
     <VCard
@@ -71,7 +69,6 @@ import axios from 'axios';
       <VCardText />
 
       <VCardText>
-        <VForm>
           <VRow>
             <VCol cols="12">
               <VTextField
@@ -93,7 +90,6 @@ import axios from 'axios';
               </VBtn>
             </VCol>
           </VRow>
-        </VForm>
       </VCardText>
     </VCard>
     <VSnackbar
@@ -149,7 +145,7 @@ export default {
       }
       else {
         this.error = true;
-        this.result = "Phone is incorrect.";
+        this.result = this.info.data.error.message;
         this.showResult = true;
       }
     },
